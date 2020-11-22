@@ -1,0 +1,3 @@
+[submodule "Natsuri/Discord-Utils"]
+	path = Natsuri/Discord-Utils
+	url = https://github.com/Xwilarg/Discord-Utils
