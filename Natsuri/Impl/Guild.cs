@@ -1,4 +1,6 @@
-﻿namespace Natsuri.Impl
+﻿using System.Collections.Generic;
+
+namespace Natsuri.Impl
 {
     public class Guild
     {
@@ -8,6 +10,6 @@
         }
 
         public string id;
-        public User[] Users = new User[0];
+        public Dictionary<string, User> Users = new Dictionary<string, User>();
     }
 }

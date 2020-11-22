@@ -1,13 +1,17 @@
-﻿namespace Natsuri.Impl
+﻿using System;
+using System.Collections.Generic;
+
+namespace Natsuri.Impl
 {
+    [Serializable]
     public class User
     {
         public User(string id)
         {
-            this.id = id;
+            UserId = id;
         }
 
-        public string id;
-        public Message[] Messages = new Message[0];
+        public string UserId;
+        public List<Message> Messages = new List<Message>();
     }
 }

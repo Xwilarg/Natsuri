@@ -1,0 +1,11 @@
+[Unit]
+Description=Natsuri
+After=network-online.target rethinkdb.target
+
+[Service]
+ExecStart=dotnet /home/zirk/bots/Natsuri/Natsuri.dll
+WorkingDirectory=/home/zirk/bots/Natsuri
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

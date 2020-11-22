@@ -20,7 +20,7 @@ namespace Natsuri
         public static DiscordSocketClient Client { private set; get; }
         private readonly CommandService _commands = new CommandService();
 
-        private Db _db;
+        public static Db Db;
 
         public static DateTime StartTime { private set; get; }
 
@@ -40,10 +40,11 @@ namespace Natsuri
             if (json["botToken"] == null)
                 throw new NullReferenceException("Invalid Credentials file");
 
-            _db = new Db();
-            await _db.InitAsync("Natsuri");
+            Db = new Db();
+            await Db.InitAsync("Natsuri");
 
             await _commands.AddModuleAsync<Communication>(null);
+            await _commands.AddModuleAsync<Information>(null);
 
             Client.MessageReceived += HandleCommandAsync;
             Client.GuildAvailable += GuildJoined;
@@ -56,11 +57,9 @@ namespace Natsuri
             await Task.Delay(-1);
         }
 
-        private Task GuildJoined(SocketGuild guild)
+        private async Task GuildJoined(SocketGuild guild)
         {
-            _db.InitGuild(guild);
-
-            return Task.CompletedTask;
+            await Db.InitGuildAsync(guild);
         }
 
         private async Task HandleCommandAsync(SocketMessage arg)
@@ -68,7 +67,7 @@ namespace Natsuri
             SocketUserMessage msg = arg as SocketUserMessage;
             if (msg == null) return;
             int pos = 0;
-            if (!arg.Author.IsBot && (msg.HasMentionPrefix(Client.CurrentUser, ref pos) || msg.HasStringPrefix("k.", ref pos)))
+            if (!arg.Author.IsBot && (msg.HasMentionPrefix(Client.CurrentUser, ref pos) || msg.HasStringPrefix("n.", ref pos)))
             {
                 SocketCommandContext context = new SocketCommandContext(Client, msg);
                 var result = await _commands.ExecuteAsync(context, pos, null);
@@ -77,6 +76,7 @@ namespace Natsuri
                     Console.WriteLine(result.Error.ToString() + ": " + result.ErrorReason);
                 }
             }
+            await Db.AddMessageAsync(msg);
         }
     }
 }
