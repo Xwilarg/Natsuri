@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.Net;
 using Discord.WebSocket;
 using Natsuri.Impl;
 using RethinkDb.Driver;
@@ -37,6 +38,19 @@ namespace Natsuri.Database
             if (await _r.Db(_dbName).Table("Guilds").GetAll(sGuild.Id.ToString()).Count().Eq(0).RunAsync<bool>(_conn)) // Guild doesn't exist in db
             {
                 guild = new Guild(sGuild.Id.ToString());
+                foreach (var chan in sGuild.Channels)
+                {
+                    if (chan is ITextChannel textChan)
+                    {
+                        try
+                        {
+                            foreach (var msg in await textChan.GetMessagesAsync().FlattenAsync())
+                                AddMessageInternal(guild, msg);
+                        }
+                        catch (HttpException)
+                        { }
+                    }
+                }
                 await _r.Db(_dbName).Table("Guilds").Insert(guild).RunAsync(_conn);
             }
             else
@@ -51,20 +65,26 @@ namespace Natsuri.Database
             if (msg.Channel is ITextChannel chan)
             {
                 var guild = _guilds[chan.GuildId];
-                User user;
-                if (!guild.Users.ContainsKey(msg.Author.Id.ToString()))
-                {
-                    user = new User(msg.Author.Id.ToString());
-                    guild.Users.Add(msg.Author.Id.ToString(), user);
-                }
-                else
-                    user = guild.Users[msg.Author.Id.ToString()];
 
-                user.Messages.Add(Message.CreateFromMessage(msg));
+                AddMessageInternal(guild, msg);
+
                 await _r.Db(_dbName).Table("Guilds").Update(_r.HashMap("id", guild.id)
                     .With("Users", guild.Users)
                 ).RunAsync(_conn);
             }
+        }
+
+        private void AddMessageInternal(Guild guild, IMessage msg)
+        {
+            User user;
+            if (!guild.Users.ContainsKey(msg.Author.Id.ToString()))
+            {
+                user = new User(msg.Author.Id.ToString());
+                guild.Users.Add(msg.Author.Id.ToString(), user);
+            }
+            else
+                user = guild.Users[msg.Author.Id.ToString()];
+            user.Messages.Add(Message.CreateFromMessage(msg));
         }
 
         public async Task<long> GetSizeInDbAsync(ulong guildId, ulong userId)

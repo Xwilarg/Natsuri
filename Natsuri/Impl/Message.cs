@@ -13,7 +13,8 @@ namespace Natsuri.Impl
                 MessageId = message.Id.ToString(),
                 MessageCreated = message.CreatedAt,
                 Content = message.Content,
-                ChannelId = message.Channel.Id.ToString()
+                ChannelId = message.Channel.Id.ToString(),
+                IsChannelNsfw = (message.Channel as ITextChannel)?.IsNsfw
             };
         }
 
@@ -21,5 +22,6 @@ namespace Natsuri.Impl
         public DateTimeOffset MessageCreated;
         public string Content;
         public string ChannelId;
+        public bool? IsChannelNsfw;
     }
 }
