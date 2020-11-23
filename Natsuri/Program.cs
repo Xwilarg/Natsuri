@@ -21,6 +21,7 @@ namespace Natsuri
         private readonly CommandService _commands = new CommandService();
 
         public static Db Db;
+        public static Random Rand = new Random();
 
         public static DateTime StartTime { private set; get; }
 
@@ -45,6 +46,7 @@ namespace Natsuri
 
             await _commands.AddModuleAsync<Communication>(null);
             await _commands.AddModuleAsync<Information>(null);
+            await _commands.AddModuleAsync<Entertainment>(null);
 
             Client.MessageReceived += HandleCommandAsync;
             Client.GuildAvailable += GuildJoined;

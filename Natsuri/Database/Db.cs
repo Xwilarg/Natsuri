@@ -102,6 +102,22 @@ namespace Natsuri.Database
             return 0L;
         }
 
+        public List<Message> GetMessages(ulong guildId)
+        {
+            var all = _guilds[guildId].Users.Where(x => x.Value.UserId != Program.Client.CurrentUser.Id.ToString()).Select(x => x.Value.Messages);
+            List<Message> allMessages = new List<Message>();
+            foreach (var m in all)
+            {
+                allMessages.AddRange(m);
+            }
+            return allMessages;
+        }
+
+        public List<Message> GetMessages(ulong guildId, ulong userId)
+        {
+            return _guilds[guildId].Users[userId.ToString()].Messages;
+        }
+
         public Dictionary<ulong, Guild> _guilds = new Dictionary<ulong, Guild>();
 
         private readonly RethinkDB _r;
