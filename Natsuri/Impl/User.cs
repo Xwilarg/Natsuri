@@ -13,5 +13,6 @@ namespace Natsuri.Impl
 
         public string UserId;
         public List<Message> Messages = new List<Message>();
+        public List<Embed> Embeds = new List<Embed>();
     }
 }
