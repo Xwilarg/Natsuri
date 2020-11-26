@@ -13,7 +13,7 @@ namespace Natsuri.Impl
             {
                 Description = embed.Description,
                 Url = embed.Url,
-                Color = embed.Color,
+                Color = embed.Color?.RawValue.ToString(),
                 ImageUrl = embed.Image.HasValue ? embed.Image.Value.Url : null,
                 Author = embed.Author.HasValue ? embed.Author.Value.Name : null,
                 Title = embed.Title,
@@ -31,7 +31,7 @@ namespace Natsuri.Impl
         public List<(string, string)> Fields = new List<(string, string)>();
         public string Description;
         public string Url;
-        public Color? Color;
+        public string Color;
         public string Author;
         public string ImageUrl;
         public string Title;
