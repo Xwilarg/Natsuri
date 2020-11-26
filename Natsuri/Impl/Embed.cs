@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Discord;
 
 namespace Natsuri.Impl
@@ -7,28 +8,21 @@ namespace Natsuri.Impl
     [Serializable]
     public class Embed
     {
-        public static Embed InitEmbed(IEmbed embed)
+        public static Embed CreateFromEmbed(IEmbed embed)
         {
-            Embed NewEmbed = new Embed
+            return new Embed()
             {
                 Description = embed.Description,
                 Url = embed.Url,
                 Color = embed.Color?.RawValue.ToString(),
-                ImageUrl = embed.Image.HasValue ? embed.Image.Value.Url : null,
-                Author = embed.Author.HasValue ? embed.Author.Value.Name : null,
+                ImageUrl = embed.Image?.Url,
+                Author = embed.Author?.Name,
                 Title = embed.Title,
-                Footer = embed.Footer.HasValue ? embed.Footer.Value.Text : null
+                Footer = embed.Footer?.Text,
+                Fields = embed.Fields.Select(x => (x.Name, x.Value)).ToArray()
             };
-
-            foreach (var field in embed.Fields)
-            {
-                NewEmbed.Fields.Add((field.Name, field.Value));
-            }
-
-            return NewEmbed;
         }
 
-        public List<(string, string)> Fields = new List<(string, string)>();
         public string Description;
         public string Url;
         public string Color;
@@ -36,5 +30,6 @@ namespace Natsuri.Impl
         public string ImageUrl;
         public string Title;
         public string Footer;
+        public (string, string)[] Fields;
     }
 }

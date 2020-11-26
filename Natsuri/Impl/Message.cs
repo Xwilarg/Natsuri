@@ -1,5 +1,6 @@
 ﻿using Discord;
 using System;
+using System.Linq;
 
 namespace Natsuri.Impl
 {
@@ -14,7 +15,8 @@ namespace Natsuri.Impl
                 MessageCreated = message.CreatedAt,
                 Content = message.Content,
                 ChannelId = message.Channel.Id.ToString(),
-                IsChannelNsfw = (message.Channel as ITextChannel)?.IsNsfw
+                IsChannelNsfw = (message.Channel as ITextChannel)?.IsNsfw,
+                Embed = message.Embeds.Count > 0 ? Embed.CreateFromEmbed(message.Embeds.ElementAt(0)) : null
             };
         }
 
@@ -23,5 +25,6 @@ namespace Natsuri.Impl
         public string Content;
         public string ChannelId;
         public bool? IsChannelNsfw;
+        public Embed Embed;
     }
 }

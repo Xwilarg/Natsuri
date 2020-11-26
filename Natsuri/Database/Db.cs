@@ -85,8 +85,6 @@ namespace Natsuri.Database
             else
                 user = guild.Users[msg.Author.Id.ToString()];
             user.Messages.Add(Message.CreateFromMessage(msg));
-            if (msg.Embeds.Count > 0)
-                user.Embeds.Add(Impl.Embed.InitEmbed(msg.Embeds.ElementAt(0)));
         }
 
         public async Task<long> GetSizeInDbAsync(ulong guildId, ulong userId)
