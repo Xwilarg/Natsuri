@@ -33,6 +33,7 @@ namespace Natsuri.Module
             var start = messages[Program.Rand.Next(0, messages.Count)];
             var current = start;
             var currentText = current.Content.Split(_splitChar, StringSplitOptions.RemoveEmptyEntries)[0];
+            var isInUrl = currentText == "http" || currentText == "https";
             string nextText = null;
             StringBuilder str = new StringBuilder(currentText);
             var validSentences = messages.Where(x => x.Content.Split(_splitChar, StringSplitOptions.RemoveEmptyEntries).Contains(currentText) && x.MessageId != current.MessageId).ToArray();
@@ -78,8 +79,10 @@ namespace Natsuri.Module
                             if (firstWord == nextText || firstWord == currentText) // TODO: Quick fix
                                 goto next;
                             currentText = firstWord;
+                            if (currentText == "http" || currentText == "https")
+                                isInUrl = true;
                             nextText = null;
-                            if (currentProg.Length > 0)
+                            if (!isInUrl && currentProg.Length > 0)
                             {
                                 curr = currentProg.Split(_splitChar, StringSplitOptions.RemoveEmptyEntries)[0].Length;
                                 currentProg = currentProg[curr..];
@@ -100,6 +103,8 @@ namespace Natsuri.Module
                 }
                 if (currentText == null)
                     break;
+                if (lastCharacs == "" || lastCharacs.Contains(' '))
+                    isInUrl = false;
                 str.Append((lastCharacs == "" ? " " : lastCharacs) + currentText);
                 next:
                 validSentences = messages.Where(x => x.Content.Split(_splitChar, StringSplitOptions.RemoveEmptyEntries).Contains(currentText) && x.MessageId != current.MessageId).ToArray();
