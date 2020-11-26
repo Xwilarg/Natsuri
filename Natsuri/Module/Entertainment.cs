@@ -27,7 +27,7 @@ namespace Natsuri.Module
             await ReplyAsync(SentenceInternal(Program.Db.GetMessages(Context.Guild.Id, Context.User.Id)));
         }
 
-        private string SentenceInternal(List<Message> messages)
+        private string SentenceInternal(List<Message> messages, int remainingTries = 10)
         {
             messages = messages.Where(x => !x.Content.All(x => _splitChar.Contains(x)) && !x.Content.StartsWith("n.")).ToList();
             var start = messages[Program.Rand.Next(0, messages.Count)];
@@ -40,6 +40,8 @@ namespace Natsuri.Module
             while (validSentences.Length > 0)
             {
                 current = validSentences[Program.Rand.Next(0, validSentences.Length)];
+                if (current.Content == null)
+                    goto next;
                 var allWords = current.Content.Split(_splitChar, StringSplitOptions.RemoveEmptyEntries);
                 var possible = allWords.Count(x => x == currentText);
                 int random = Program.Rand.Next(0, possible);
@@ -106,7 +108,7 @@ namespace Natsuri.Module
                     break;
             }
             end:
-            return str.ToString();
+            return remainingTries == 0 || str.ToString().Split(_splitChar, StringSplitOptions.RemoveEmptyEntries).Length > 1 ? str.ToString() : SentenceInternal(messages, remainingTries - 1);
         }
     }
 }
