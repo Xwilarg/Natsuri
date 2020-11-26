@@ -61,7 +61,7 @@ namespace Natsuri.Module
                         if (random == 0)
                         {
                             curr = currentProg.Split(_splitChar, StringSplitOptions.RemoveEmptyEntries)[0].Length;
-                            currentProg = currentProg.Substring(curr, currentProg.Length - curr);
+                            currentProg = currentProg[curr..];
                             if (currentProg.Length == 0)
                                 goto end;
                             lastCharacs = "";
@@ -79,11 +79,15 @@ namespace Natsuri.Module
                             nextText = null;
                             if (currentProg.Length > 0)
                             {
-                                currentProg = currentProg.Substring(0, currentProg.Split(_splitChar, StringSplitOptions.RemoveEmptyEntries)[0].Length);
+                                curr = currentProg.Split(_splitChar, StringSplitOptions.RemoveEmptyEntries)[0].Length;
+                                currentProg = currentProg[curr..];
                                 while (currentProg.Length > 0 && _splitChar.Contains(currentProg[0]))
                                     currentProg = currentProg[1..];
-                                curr = currentProg.Split(_splitChar, StringSplitOptions.RemoveEmptyEntries)[0].Length;
-                                nextText = currentProg.Length == 0 ? null : currentProg.Split(_splitChar, StringSplitOptions.RemoveEmptyEntries)[0];
+                                if (currentProg.Length > 0)
+                                {
+                                    curr = currentProg.Split(_splitChar, StringSplitOptions.RemoveEmptyEntries)[0].Length;
+                                    nextText = currentProg.Length == 0 ? null : currentProg.Split(_splitChar, StringSplitOptions.RemoveEmptyEntries)[0];
+                                }
                             }
                             break;
                         }
