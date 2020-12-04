@@ -113,7 +113,7 @@ namespace Natsuri.Module
                     break;
             }
             end:
-            return remainingTries == 0 || str.ToString().Split(_splitChar, StringSplitOptions.RemoveEmptyEntries).Length > 1 ? str.ToString() : SentenceInternal(messages, remainingTries - 1);
+            return (remainingTries == 0 || str.ToString().Split(_splitChar, StringSplitOptions.RemoveEmptyEntries).Length > 1) ? str.ToString() : SentenceInternal(messages, remainingTries - 1);
         }
     }
 }
